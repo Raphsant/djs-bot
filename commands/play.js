@@ -47,14 +47,19 @@ async function connectToChannel(channel) {
  */
 module.exports = {
   //command information
-  data: new SlashCommandBuilder().setName("play").setDescription("join VC"),
+  data: new SlashCommandBuilder().setName("play").setDescription("join VC").addSubcommand(subcommand => subcommand.setName('play').setDescription('Info about a user')).addSubcommand(subcommand => subcommand.setName('pause').setDescription('test2 descriiption')),
   //Command implementation
   async execute(interaction) {
+    console.log(interaction.options.getSubcommand())
+    const action = interaction.options.getSubcommand();
+    
     //Specifies that the channel to join is the channel of the user who requested the bot
     const channel = interaction.member.voice.channel;
     //Creates the empty audio player
     const player = createAudioPlayer();
     try {
+      switch (action) {
+        case 'play':
       //Audio source
       const resource = createAudioResource("./media/test.mp3");
       //Join the Channel
@@ -63,7 +68,18 @@ module.exports = {
       player.play(resource);
       //Subscribes the bot to the player.
       connection.subscribe(player);
-      interaction.reply("Playing now!");
+      interaction.reply("Playing now!");    
+      console.log(player)
+          break;
+          case 'pause':
+            // console.log(player)
+            player.pause();
+            interaction.reply("paused")
+            break;
+        default:
+          // code
+      }
+      
     } catch (error) {
       console.error(error);
     }
